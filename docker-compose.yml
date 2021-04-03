@@ -21,15 +21,6 @@ services:
     command: sh -c "yarn && yarn start"
     depends_on:
       - dcarddrawcardbackend
-    healthcheck:
-        # test: ["CMD", "curl", "-f", "http://localhost:3000/draw#", "|| exit 1"]
-        test: ["CMD", "curl", "-i", "http://localhost:3000/draw#", "2>&1 | grep -c -e '200 OK'"]
-        interval: 1m30s
-        timeout: 10s
-        retries: 3
-        start_period: 40s
-    ports:
-      - 3001:3000
     networks:
       - frontend
       - backend
@@ -46,6 +37,12 @@ services:
       - mongo
     # command: sh -c "yarn && yarn run make-env && yarn run build  && yarn run test"
     command: sh -c "yarn && yarn run make-env && yarn run build  && yarn run start:docker"
+    healthcheck:
+      test: wget -q --spider http://localhost:3000
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
     ports:
       - 3000:3000
     networks:
@@ -55,8 +52,8 @@ services:
 
   redis-server:
     image: redis
-    ports:
-      - 6379:6379
+    # ports:
+    #   - 6379:6379
     networks:
       - backend
 
@@ -64,75 +61,72 @@ services:
     image: mongo
     volumes:
       - ./data:/data/db
-    ports:
-      - 27017:27017
+    # ports:
+    #   - 27017:27017
     networks:
       - backend
 
-  # jmeter-master:
-  #   image: justb4/jmeter
-  #   volumes:
-  #     - ./jmeter:/mnt/jmeter
-  #   # 待服務完全起好
-  #   depends_on:
-  #     dcarddrawcardfrontend:
-  #       condition: service_healthy
-  #     # - haproxy
-  #     # - jmeter-slave-1
-  #     # - jmeter-slave-2
-  #     # - jmeter-slave-3
-  #   command: 
-  #     - | 
-  #       -n -X
-  #       -Jserver.rmi.ssl.disable=true
-  #       -Jclient.rmi.localport=7000
-  #       -R jmeter-slave-1,jmeter-slave-2,jmeter-slave-3
-  #       -t /mnt/jmeter/http-request-test.jmx
-  #       -l /mnt/jmeter/compose/result.jtl
-  #       -j /mnt/jmeter/compose/jmeter.log
-  #       -e -o /mnt/jmeter/compose/report
+  jmeter-master:
+    image: justb4/jmeter
+    volumes:
+      - ./jmeter:/mnt/jmeter
+    # 待服務完全起好
+    depends_on:
+      dcarddrawcardbackend:
+        condition: service_healthy
+    command: 
+      - | 
+        -n -X
+        -Jserver.rmi.ssl.disable=true
+        -Jclient.rmi.localport=7000
+        -R jmeter-slave-1,jmeter-slave-2,jmeter-slave-3
+        -t /mnt/jmeter/http-request-test.jmx
+        -l /mnt/jmeter/compose/result.jtl
+        -j /mnt/jmeter/compose/jmeter.log
+        -e -o /mnt/jmeter/compose/report
 
-  #   networks:
-  #     - jmeter-net
+    restart: on-failure:5
+    networks:
+      - jmeter-net
 
-  # jmeter-slave-1:
-  #   image: justb4/jmeter
-  #   volumes:
-  #     - ./jmeter:/mnt/jmeter
-  #   command: 
-  #     - |
-  #       -s -n 
-  #       -Jclient.rmi.localport=7000 
-  #       -Jserver.rmi.localport=60000 
-  #       -Jserver.rmi.ssl.disable=true
-  #   networks:
-  #     - jmeter-net
+  jmeter-slave-1:
+    image: justb4/jmeter
+    volumes:
+      - ./jmeter:/mnt/jmeter
+    command: 
+      - |
+        -s -n 
+        -Jclient.rmi.localport=7000 
+        -Jserver.rmi.localport=60000 
+        -Jserver.rmi.ssl.disable=true
+    networks:
+      - jmeter-net
 
-  # jmeter-slave-2:
-  #   image: justb4/jmeter
-  #   volumes:
-  #     - ./jmeter:/mnt/jmeter
-  #   command: 
-  #     - |
-  #       -s -n 
-  #       -Jclient.rmi.localport=7000 
-  #       -Jserver.rmi.localport=60000 
-  #       -Jserver.rmi.ssl.disable=true
-  #   networks:
-  #     - jmeter-net
+  jmeter-slave-2:
+    image: justb4/jmeter
+    volumes:
+      - ./jmeter:/mnt/jmeter
+    command: 
+      - |
+        -s -n 
+        -Jclient.rmi.localport=7000 
+        -Jserver.rmi.localport=60000 
+        -Jserver.rmi.ssl.disable=true
+    networks:
+      - jmeter-net
 
-  # jmeter-slave-3:
-  #   image: justb4/jmeter
-  #   volumes:
-  #     - ./jmeter:/mnt/jmeter
-  #   command: 
-  #     - |
-  #       -s -n 
-  #       -Jclient.rmi.localport=7000 
-  #       -Jserver.rmi.localport=60000 
-  #       -Jserver.rmi.ssl.disable=true
-  #   networks:
-  #     - jmeter-net
+  jmeter-slave-3:
+    image: justb4/jmeter
+    volumes:
+      - ./jmeter:/mnt/jmeter
+    command: 
+      - |
+        -s -n 
+        -Jclient.rmi.localport=7000 
+        -Jserver.rmi.localport=60000 
+        -Jserver.rmi.ssl.disable=true
+    networks:
+      - jmeter-net
 
 networks:
   frontend:
