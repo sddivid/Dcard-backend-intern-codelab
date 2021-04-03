@@ -84,6 +84,7 @@ services:
         -l /mnt/jmeter/compose/result.jtl
         -j /mnt/jmeter/compose/jmeter.log
         -e -o /mnt/jmeter/compose/report
+
     restart: on-failure:5
     networks:
       - jmeter-net
