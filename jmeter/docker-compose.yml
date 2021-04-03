@@ -1,0 +1,52 @@
+version: '3.4'
+
+services:
+
+  jmeter-master:
+    image: justb4/jmeter
+    volumes:
+      - .:/mnt/jmeter
+    command: 
+      - | 
+        -n -X
+        -Jclient.rmi.localport=7000
+        -R jmeter-slave-1,jmeter-slave-2
+        -t /mnt/jmeter/test.jmx
+        -l /mnt/jmeter/compose/result.jtl
+        -j /mnt/jmeter/compose/jmeter.log
+
+    networks:
+      - jmeter-net
+    
+  jmeter-slave-1:
+    image: justb4/jmeter
+    volumes:
+      - .:/mnt/jmeter
+    command: 
+      - |
+        -s -n 
+        -Jclient.rmi.localport=7000 
+        -Jserver.rmi.localport=60000 
+        -Jserver.rmi.ssl.disable=true
+    depends_on:
+        - jmeter-master
+    networks:
+      - jmeter-net
+
+  jmeter-slave-2:
+    image: justb4/jmeter
+    volumes:
+      - .:/mnt/jmeter
+    command: 
+      - |
+        -s -n 
+        -Jclient.rmi.localport=7000 
+        -Jserver.rmi.localport=60000 
+        -Jserver.rmi.ssl.disable=true
+    depends_on:
+        - jmeter-master
+    networks:
+      - jmeter-net
+
+networks:
+    jmeter-net:
