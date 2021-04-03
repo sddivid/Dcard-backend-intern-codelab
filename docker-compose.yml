@@ -1,53 +1,26 @@
-version: '3.4'
+version: '3.7'
 
 services:
-  # nginx:
-  #   image: nginx:stable-alphine
-  #   ports:
-  #     - 8080:80
-  #   volumes:
-  #     - ${PWD}/nginx/conf/default.conf:/etc/nginx/conf.d/default.conf:z
-  #   networks:
-  #     - frontend
-  # web:
-  #   image: simple_web
-  #   deploy:
-  #     replicas: 3
-  #     endpoint_mode: dnsrr 
-  #   networks:
-  #     - haproxy-practice
 
-  # haproxy:
-  #   image: haproxy
-  #   volumes:
-  #     - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
-  #   depends_on:
-  #     - dcarddrawcardfrontend
-  #   ports:
-  #     - 48686:8000
-  #   networks:
-  #     - frontend
-  haproxy-dcard:
-    build:
-      context: haproxy/.
-      dockerfile: ./Dockerfile
-    ports:
-      - 48686:8003
+  haproxy:
+    image: haproxy
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
     depends_on:
       - dcarddrawcardfrontend
+    ports:
+      - 80:80
+    networks:
+      - frontend
 
   dcarddrawcardfrontend:
     image: dcarddrawcardfrontend
-    # deploy:
-      # endpoint_mode: dnsrr 
     build:
-      context: draw-card
+      context: D4-homework-Frontend
       dockerfile: ./Dockerfile
     command: sh -c "yarn && yarn start"
     depends_on:
       - dcarddrawcardbackend
-    ports:
-      - 3001:3000
     networks:
       - frontend
       - backend
@@ -55,25 +28,32 @@ services:
   dcarddrawcardbackend:
     image: dcarddrawcardbackend
     build:
-      context: dcard-draw-card-backend
+      context: D4-homework-Backend
       dockerfile: ./Dockerfile
     environment:
       NODE_ENV: development
     depends_on:
       - redis-server
       - mongo
+    # command: sh -c "yarn && yarn run make-env && yarn run build  && yarn run test"
     command: sh -c "yarn && yarn run make-env && yarn run build  && yarn run start:docker"
-    # command: sh -c "yarn && yarn run build && yarn run test-js && yarn run start"
+    healthcheck:
+      test: wget -q --spider http://localhost:3000
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
     ports:
       - 3000:3000
     networks:
       - frontend
       - backend
+      - jmeter-net
 
   redis-server:
     image: redis
-    ports:
-      - 6379:6379
+    # ports:
+    #   - 6379:6379
     networks:
       - backend
 
@@ -81,11 +61,73 @@ services:
     image: mongo
     volumes:
       - ./data:/data/db
-    ports:
-      - 27017:27017
+    # ports:
+    #   - 27017:27017
     networks:
       - backend
+
+  jmeter-master:
+    image: justb4/jmeter
+    volumes:
+      - ./jmeter:/mnt/jmeter
+    # 待服務完全起好
+    depends_on:
+      dcarddrawcardbackend:
+        condition: service_healthy
+    command: 
+      - | 
+        -n -X
+        -Jserver.rmi.ssl.disable=true
+        -Jclient.rmi.localport=7000
+        -R jmeter-slave-1,jmeter-slave-2,jmeter-slave-3
+        -t /mnt/jmeter/http-request-test.jmx
+        -l /mnt/jmeter/compose/result.jtl
+        -j /mnt/jmeter/compose/jmeter.log
+        -e -o /mnt/jmeter/compose/report
+    restart: on-failure:5
+    networks:
+      - jmeter-net
+
+  jmeter-slave-1:
+    image: justb4/jmeter
+    volumes:
+      - ./jmeter:/mnt/jmeter
+    command: 
+      - |
+        -s -n 
+        -Jclient.rmi.localport=7000 
+        -Jserver.rmi.localport=60000 
+        -Jserver.rmi.ssl.disable=true
+    networks:
+      - jmeter-net
+
+  jmeter-slave-2:
+    image: justb4/jmeter
+    volumes:
+      - ./jmeter:/mnt/jmeter
+    command: 
+      - |
+        -s -n 
+        -Jclient.rmi.localport=7000 
+        -Jserver.rmi.localport=60000 
+        -Jserver.rmi.ssl.disable=true
+    networks:
+      - jmeter-net
+
+  jmeter-slave-3:
+    image: justb4/jmeter
+    volumes:
+      - ./jmeter:/mnt/jmeter
+    command: 
+      - |
+        -s -n 
+        -Jclient.rmi.localport=7000 
+        -Jserver.rmi.localport=60000 
+        -Jserver.rmi.ssl.disable=true
+    networks:
+      - jmeter-net
 
 networks:
   frontend:
   backend:
+  jmeter-net: 
