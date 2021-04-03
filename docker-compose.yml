@@ -3,7 +3,7 @@ version: '3.4'
 services:
 
   haproxy:
-    image: haproxy
+    image: haproxy:5.3
     volumes:
       - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
     depends_on:

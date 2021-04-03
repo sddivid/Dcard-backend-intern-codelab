@@ -7,3 +7,5 @@ mongoose-express-ts
 tdd-example-express
 data
 jmeter/compose
+.vscode
+.DS_Store
