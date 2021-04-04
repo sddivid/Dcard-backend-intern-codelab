@@ -79,7 +79,7 @@ services:
         condition: service_healthy
     command: 
       - | 
-        -n -X
+        -n -X -f
         -Jserver.rmi.ssl.disable=true
         -Jclient.rmi.localport=7000
         -R jmeter-slave-1,jmeter-slave-2,jmeter-slave-3
