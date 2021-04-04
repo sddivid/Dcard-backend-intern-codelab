@@ -1,18 +1,17 @@
 version: '3.7'
 
 services:
-
-  haproxy-dcard:
-    # build:
-    #   context: haproxy/.
-    #   dockerfile: ./Dockerfile
-    image: haproxy
+  haproxy-dcard: 
+    image: haproxy 
     volumes:
       - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
     ports:
       - 80:80
     depends_on:
-      - dcarddrawcardfrontend
+      dcarddrawcardfrontend:
+        condition: service_started
+      dcarddrawcardbackend:
+        condition: service_healthy
     networks:
       - frontend
 
@@ -81,7 +80,7 @@ services:
         condition: service_healthy
     command: 
       - | 
-        -n -X
+        -n -X -f
         -Jserver.rmi.ssl.disable=true
         -Jclient.rmi.localport=7000
         -R jmeter-slave-1,jmeter-slave-2,jmeter-slave-3
