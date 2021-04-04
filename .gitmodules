@@ -1,0 +1,6 @@
+[submodule "D4-homework-Backend"]
+	path = D4-homework-Backend
+	url = git@github.com:CS6/D4-homework-Backend.git
+[submodule "D4-homework-Frontend"]
+	path = D4-homework-Frontend
+	url = git@github.com:CS6/D4-homework-Frontend.git
