@@ -1,4 +1,4 @@
-ㄔㄡCard
+# ㄔㄡCard 的 docker-compose Codelab
 
 ## How To Run
 確保目錄下有兩個相依的 submodule
@@ -70,22 +70,3 @@ HA => F2E => B2E => DB[redis,mongo]
 {jmeter_F2E(GUI)}HA => F2E{jmeter_M} => B2E => {Robo3T(GUI),ARDM(GUI)}DB[redis,mongo]
 
 
-
-
-docker-compose up
-
-
-## contention問題
-
-
-docker-compose up -d
-## Docker MultiStage 
-
-## 移除 delet dangling images (<nan>) https://docs.docker.com/engine/reference/commandline/image_prune/
-docker image prune
-docker image prune -a --filter "until=1h"
-
-
-
-設計：
-haproxy
