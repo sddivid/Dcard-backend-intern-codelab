@@ -39,7 +39,7 @@ services:
       - redis-server
       - mongo
     # command: sh -c "yarn && yarn run make-env && yarn run build  && yarn run test"
-    command: sh -c "yarn && yarn run make-env && yarn run build  && yarn run start:docker"
+    command: sh -c "yarn && yarn run make-env && yarn run build && yarn run faker:docker && yarn run start:docker"
     healthcheck:
       test: wget -q --spider http://localhost:3000
       interval: 15s
@@ -55,8 +55,8 @@ services:
 
   redis-server:
     image: redis
-    # ports: # 開放埠以供ＲＤＭ服務連線
-    #   - 6379:6379
+    ports: # 開放埠以供ＲＤＭ服務連線
+      - 6379:6379
     networks:
       - backend
     restart: always
@@ -66,8 +66,8 @@ services:
     image: mongo
     volumes:
       - ./data:/data/db
-    # ports: # 開放埠以供Ｒ3Ｔ服務連線
-    #   - 27017:27017
+    ports: # 開放埠以供Ｒ3Ｔ服務連線
+      - 27017:27017
     networks:
       - backend
 
