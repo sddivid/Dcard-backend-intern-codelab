@@ -59,6 +59,8 @@ services:
     #   - 6379:6379
     networks:
       - backend
+    restart: always
+    # restart: on-failure:5
 
   mongo:
     image: mongo
