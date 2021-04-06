@@ -29,7 +29,7 @@ ${PWD}/haproxy/haproxy.cfg
 ```
 # 互動測試架構
 
-!(互動測試架構)[]
+![互動測試架構](https://github.com/CS6/docker-codelab/blob/4e5ec4ba215464aca041affb7a738afe8427fd67/img/Flow.png)
 
 { Jmeter_F2E } HAhaproxy => Frontend{ Jmeter Docker } => Backend => DB[redis,mongo]
 
@@ -57,8 +57,7 @@ https://drive.google.com/file/d/1tZ2m3xwh_hDqq0sKWJsSvVBCzts1ZrzG/view?usp=shari
 
 
 #＃ 互動測試結果
-
-
+![互動測試結果](https://github.com/CS6/docker-codelab/blob/4e5ec4ba215464aca041affb7a738afe8427fd67/img/JMeter.png)
 
 
 
