@@ -1,7 +1,13 @@
 # ㄔㄡCard 的 docker-compose Codelab
 
-## How To Run
+## Prerequisites
 確保目錄下有兩個相依的 submodule
+```
+git clone https://github.com/CS6/D4-homework-Frontend.git
+git clone https://github.com/CS6/D4-homework-Backend.git
+```
+
+## How To Run
 ```shell
 docker-compose up 
 ```
