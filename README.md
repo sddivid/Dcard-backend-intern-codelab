@@ -42,6 +42,12 @@ ${PWD}/haproxy/haproxy.cfg
 使用者 或是 jmeter GUI 請求Frontend頁面 (haproxy 限制流量)
 請求Frontend頁面 或是 jmeter Docker 請求Backend (Redis+lua 限制流量)
 
+#### jmeter 容器的作用？
+模擬來自多客戶端 IP 對後端的請求
+
+
+
+
 ## `注意` ： 這邊理論上不該開放外部存取 Port ， 用於實際環境請記得關閉並透過 networks 建立
 
 
@@ -65,6 +71,8 @@ https://drive.google.com/file/d/1tZ2m3xwh_hDqq0sKWJsSvVBCzts1ZrzG/view?usp=shari
 #＃ 互動測試結果
 ![互動測試結果](https://github.com/CS6/docker-codelab/blob/4e5ec4ba215464aca041affb7a738afe8427fd67/img/JMeter.png)
 
+#＃ jmeter 給予 1500 次請求之結果 
+<img width="1538" alt="image" src="https://user-images.githubusercontent.com/13188949/113802431-4fcdc380-978d-11eb-945e-f359cd6c0d24.png">
 
 
 
