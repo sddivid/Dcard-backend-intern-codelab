@@ -60,11 +60,19 @@ https://drive.google.com/file/d/1tZ2m3xwh_hDqq0sKWJsSvVBCzts1ZrzG/view?usp=shari
 | dcarddrawcardbackend |   後端   | 提供抽卡資料＆抽卡次數限制 |  3000 |
 | redis-server         |    DB    |           紀錄抽卡次數限制 |  6379 |
 | mongo                |    DB    |               紀錄抽卡資料 | 27017 |
-| jmeter-master        | 測試工具 |               請求次數測試 |  jmeter-net |
-| jmeter--slave-1      | 測試工具 |               請求次數測試 | jmeter-net |
-| jmeter--slave-2      | 測試工具 |               請求次數測試 | jmeter-net |
-| jmeter--slave-3      | 測試工具 |               請求次數測試 | jmeter-net |
+| jmeter-master        | 測試工具 |               請求次數測試(1500) |  jmeter-net |
+| jmeter--slave-1      | 測試工具 |               請求次數測試(1500) | jmeter-net |
+| jmeter--slave-2      | 測試工具 |               請求次數測試(1500) | jmeter-net |
+| jmeter--slave-3      | 測試工具 |               請求次數測試(1500) | jmeter-net |
 
+
+####  互動測試建議搭配工具
+| Tool             |   角色   |                       功能 | 做用範圍 |
+|----------------------|:--------:|---------------------------:|:------|
+| jmeter GUI     |   測試工具   |         代理前端與限制流量 |    前端(haproxy規則會檔掉超出的流量) |
+| jmeter GUI     |   測試工具   |         請求次數測試(1500) |    後端(Rate Limit middleware會檔掉超出的流量) |
+| [Robo 3T](https://robomongo.org)     |   DB管理工具   |         代理前端與限制流量 |    MongoDB (這裡放用戶假資料而已，來不及做黑名單驗證) |
+| [Another Redis Desktop Manager](https://github.com/qishibo/AnotherRedisDesktopManager) |   DB管理工具   |         代理前端與限制流量 |    Redis(這裡放 middleware流量)|
 
 
 
